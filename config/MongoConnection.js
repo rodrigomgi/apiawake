@@ -9,14 +9,14 @@ function MongoConnection(){
 }
 
 //Para tipo de conexão local ou remota
-const AMBIENTE = 'LOCAL';
+const AMBIENTE = 'REMOTO';
 
 MongoConnection.prototype.url = function(){
     switch(AMBIENTE){
         case 'LOCAL':
             return 'mongodb://' + this.servidor + ':' + this.porta + '/' + this.banco;
         case 'REMOTO':
-            return '';        
+            return 'mongodb+srv://rodrigo:rodrigo@awake-71owl.mongodb.net/test?retryWrites=true&w=majority';        
     }
 }
 

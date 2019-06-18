@@ -3,6 +3,7 @@ const app = express();
 const MongoConnection = require('../config/MongoConnection');
 const objectId = require('mongodb').ObjectID;
 const bcrypt = require('bcrypt');
+const moment = require('moment');
 
 
 app.get('/', function(requisicao, resposta){
@@ -10,6 +11,7 @@ app.get('/', function(requisicao, resposta){
 });
 
 
+//CADASTRA USUÁRIO
 app.post('/', function(requisicao, resposta){
     var dados = requisicao.body;
     
@@ -69,7 +71,8 @@ app.post('/login', function(requisicao, resposta){
     }        
 
     var mongoConnection = new MongoConnection().open(async function(erro, banco){
-        banco.collection('usuarios').findOne({email}, async function(erro, dados){
+        
+        banco.collection('usuarios').findOne({email, status: {$ne: false}}, async function(erro, dados){
             if(!dados)
             {
                 resposta.status(500).send('Usuário não encontrado!');
@@ -143,6 +146,32 @@ app.put('/:id', function(requisicao, resposta){
 
 
 
+
+
+//DESATIVAR USUÁRIO
+app.put('/excluir/:id', function(requisicao, resposta){
+
+    var idUsuario = requisicao.params.id; 
+    var email = requisicao.body.email; 
+    
+    var hoje = new Date();
+    var dataFormatada = moment(hoje).format('DD/MM/YYYY HH:mm:ss');
+
+    var mongoConnection = new MongoConnection().open(async function(erro, banco){        
+
+                await banco.collection('usuarios').updateOne(
+                        { _id: objectId(idUsuario)},
+                        { $set: {
+                           status: false,
+                           email: `removido em ${dataFormatada} - email: [${email}]`
+                        }}, function(erro, resultado){
+                            if(erro)
+                                resposta.status(500).json(erro);
+                            else
+                                resposta.status(200).json(resultado);
+                    });
+        });    
+});
 
 
 

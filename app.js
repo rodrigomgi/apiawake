@@ -15,7 +15,6 @@ const usuario = require('./routes/usuarios');
 app.use('/eventos', evento);
 app.use('/usuarios', usuario);
 
-
 //ROTA DE BOAS VINDAS
 app.get('/', function(requisicao, resposta){
     resposta.status(200).send('<h1>Bem Vindo a API Awake!</h1>');
@@ -24,7 +23,7 @@ app.get('/', function(requisicao, resposta){
 
 
 //Definição da porta em que a API irá atender as requisições.
-const porta = 3000;
+const porta = process.env.PORT || 3000; 
 
 app.listen(porta, () => {
     console.log('SERVIDOR ONLINE RODANDO NA PORTA ' + porta);
